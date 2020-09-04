@@ -15,12 +15,12 @@ function tfidf(rating_matrix::SparseMatrixCSC)
     U, I, R = findnz(rating_matrix)
     n_users, n_items = size(rating_matrix)
         
-    bincount = ones(n_users) # to avoid zero devision
+    bincount = zeros(n_users) # to avoid zero devision
     for u in U
         bincount[u] += 1
     end
 
-    idf = log.(n_items ./ bincount)
+    idf = log.(n_items ./ (bincount .+ 1e-6)) .+ 1
 
     for j in 1:length(U)
         R[j] = R[j] * idf[U[j]]
